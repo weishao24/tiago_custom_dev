@@ -1,0 +1,17 @@
+# ROS2 colcon 编译产物
+build/
+install/
+log/
+
+# Git 无关文件
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+# 系统临时文件
+tmp/
+*.log
+# MoveIt 2 源码工作空间（若放在 tiago_ws 外可忽略）
+moveit2_ws/
