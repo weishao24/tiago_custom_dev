@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="cm2m" value="0.01" />
+  <xacro:property name="mm2m" value="0.001" />
+  <xacro:property name="deg2rad" value="${3.14159265/180.0}" />
+
+  <!-- 夹抱装置参数 -->
+  <xacro:property name="chassis_width" value="0.4" />
+  <xacro:property name="lift_arm_h" value="1.2" />
+  <xacro:property name="lift_arm_thick" value="0.02" />
+  <xacro:property name="lift_arm_w" value="0.1" />
+  <xacro:property name="gripper_h" value="0.3" />
+  <xacro:property name="gripper_w" value="0.3" />
+  <xacro:property name="gripper_len" value="0.4" />
+
+  <!-- 夹抱装置物理结构 -->
+  <link name="lift_arm_base">
+    <visual>
+      <geometry><box size="${0.02} ${chassis_width} ${0.02}" /></geometry>
+      <material name="silver"><color rgba="0.7 0.7 0.7 1.0" /></material>
+    </visual>
+    <collision><geometry><box size="${0.02} ${chassis_width} ${0.02}" /></geometry></collision>
+    <inertial>
+      <mass value="0.5" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.005" iyz="0.0" izz="0.001" />
+    </inertial>
+  </link>
+
+  <joint name="left_lift_arm_joint" type="fixed">
+    <parent link="lift_arm_base" />
+    <child link="left_lift_arm" />
+    <origin xyz="0 ${chassis_width/2 - lift_arm_w/2} ${lift_arm_h/2}" rpy="0 0 0" />
+  </joint>
+  <link name="left_lift_arm">
+    <visual><geometry><box size="${lift_arm_thick} ${lift_arm_w} ${lift_arm_h}" /></geometry><material name="gray"><color rgba="0.3 0.3 0.3 1.0" /></material></visual>
+    <collision><geometry><box size="${lift_arm_thick} ${lift_arm_w} ${lift_arm_h}" /></geometry></collision>
+    <inertial><mass value="0.4" /><inertia ixx="0.03" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.03" /></inertial>
+  </link>
+
+  <joint name="right_lift_arm_joint" type="fixed">
+    <parent link="lift_arm_base" />
+    <child link="right_lift_arm" />
+    <origin xyz="0 ${-chassis_width/2 + lift_arm_w/2} ${lift_arm_h/2}" rpy="0 0 0" />
+  </joint>
+  <link name="right_lift_arm">
+    <visual><geometry><box size="${lift_arm_thick} ${lift_arm_w} ${lift_arm_h}" /></geometry><material name="gray"><color rgba="0.3 0.3 0.3 1.0" /></material></visual>
+    <collision><geometry><box size="${lift_arm_thick} ${lift_arm_w} ${lift_arm_h}" /></geometry></collision>
+    <inertial><mass value="0.4" /><inertia ixx="0.03" ixy="0.0" ixz="0.0" iyy="0.0005" iyz="0.0" izz="0.03" /></inertial>
+  </link>
+
+  <joint name="gripper_slider_joint" type="prismatic">
+    <parent link="lift_arm_base" />
+    <child link="gripper_slider" />
+    <axis xyz="0 0 1" />
+    <limit lower="0.2" upper="1.0" effort="40.0" velocity="0.2" />
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <link name="gripper_slider">
+    <visual><geometry><box size="${0.02} ${chassis_width - 2*lift_arm_w} ${0.02}" /></geometry><material name="silver"><color rgba="0.7 0.7 0.7 1.0" /></material></visual>
+    <collision><geometry><box size="${0.02} ${chassis_width - 2*lift_arm_w} ${0.02}" /></geometry></collision>
+    <inertial><mass value="0.3" /><inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.002" iyz="0.0" izz="0.001" /></inertial>
+  </link>
+
+  <joint name="gripper_extend_joint" type="prismatic">
+    <parent link="gripper_slider" />
+    <child link="gripper" />
+    <axis xyz="1 0 0" />
+    <limit lower="0" upper="${gripper_len}" effort="20.0" velocity="0.15" />
+    <origin xyz="0 0 ${gripper_h/2}" />
+  </joint>
+  <link name="gripper">
+    <visual><geometry><box size="${gripper_len} ${chassis_width - 2*lift_arm_w} ${gripper_h}" /></geometry><material name="blue"><color rgba="0.2 0.4 0.8 1.0" /></material><origin xyz="${gripper_len/2} 0 0" /></visual>
+    <collision><geometry><box size="${gripper_len} ${chassis_width - 2*lift_arm_w} ${gripper_h}" /></geometry></collision>
+    <inertial><mass value="0.5" /><inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.008" iyz="0.0" izz="0.01" /></inertial>
+  </link>
+
+  <!-- 挂载宏 -->
+  <xacro:macro name="hikvision_gripper" params="parent_link">
+    <joint name="tiago_lift_joint" type="fixed">
+      <parent link="${parent_link}" />
+      <child link="lift_arm_base" />
+      <origin xyz="0 0 0.1" rpy="0 0 0" />
+      <axis xyz="0 0 1" />
+      <limit effort="1000" velocity="1000" />
+    </joint>
+  </xacro:macro>
+</robot>
