@@ -33,3 +33,31 @@ arm_controller:
         goal: 0.02
       arm_7_joint:
         goal: 0.02
+
+# ============== 海康AGV夹抱装置控制器（ROS2标准格式） ==============
+gripper_slider_controller:
+  ros__parameters:  # 核心：必须嵌套ros__parameters
+    type: position_controllers/JointGroupPositionController  # 控制器类型
+    joints: [gripper_slider_joint]  # 复数joints，列表格式（ROS2标准）
+    command_interfaces: [position]  # 控制接口（与ros2_control.urdf.xacro匹配）
+    state_interfaces: [position, velocity]  # 状态接口（与ros2_control.urdf.xacro匹配）
+    # PID参数（可选，若需闭环控制）
+    pid:
+      p: 200.0
+      i: 0.0
+      d: 20.0
+    allow_overshoot: false
+    state_publish_rate: 50.0
+
+gripper_extend_controller:
+  ros__parameters:  # 核心：必须嵌套ros__parameters
+    type: position_controllers/JointGroupPositionController
+    joints: [gripper_extend_joint]  # 复数joints，列表格式
+    command_interfaces: [position]
+    state_interfaces: [position, velocity]
+    pid:
+      p: 200.0
+      i: 0.0
+      d: 20.0
+    allow_overshoot: false
+    state_publish_rate: 50.0

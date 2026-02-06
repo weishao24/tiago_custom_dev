@@ -167,6 +167,35 @@ def declare_actions(
 
     launch_description.add_action(ft_sensor_controller)
 
+    # ========== 新增：海康AGV夹抱装置控制器 ==========
+    # 升降关节控制器
+    gripper_slider_controller = GroupAction(
+        [
+            generate_load_controller_launch_description(
+                controller_name="gripper_slider_controller",
+                controller_params_file=os.path.join(
+                    pkg_share_folder, "config", "arm_controller.yaml"
+                ),
+            )
+        ],
+        forwarding=False,
+    )
+    launch_description.add_action(gripper_slider_controller)
+
+    # 伸缩关节控制器
+    gripper_extend_controller = GroupAction(
+        [
+            generate_load_controller_launch_description(
+                controller_name="gripper_extend_controller",
+                controller_params_file=os.path.join(
+                    pkg_share_folder, "config", "arm_controller.yaml"
+                ),
+            )
+        ],
+        forwarding=False,
+    )
+    launch_description.add_action(gripper_extend_controller)
+
     # Configure LA dependant controllers
     launch_description.add_action(OpaqueFunction(
         function=configure_end_effector))
